@@ -34,7 +34,7 @@ def transform(df, rates_csv_path):
 
     df['MC_GBP_Billion'] = [np.round(x*rates['GBP'],2) for x in df['MC_USD_Billion']]
     df['MC_EUR_Billion'] = [np.round(x*rates['EUR'],2) for x in df['MC_USD_Billion']]
-    df['MC_INR_Billion'] = [np.round(x*rates['INR'],2) for x in df['MC_USD_Billion']]
+    df['MC_CAD_Billion'] = [np.round(x*rates['CAD'],2) for x in df['MC_USD_Billion']]
 
 def load_to_csv(df, output_csv_path):
     df.to_csv(output_csv_path)
@@ -68,7 +68,7 @@ output_csv_path = './Countries_by_GDP.csv'
 
 # log_progress("Data extraction complete. Initiating Transformation process")
 
-# transformed_data = transform(extracted_data, "./exchange_rate.csv")
+# transformed_data = transform(extracted_data, "./exchange_rates.csv")
 
 # log_progress("Data transformation complete. Initiating Loading process")
 
