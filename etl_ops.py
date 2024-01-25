@@ -41,3 +41,9 @@ def load_to_csv(df, output_csv_path):
 
 def load_to_db(df, sql_connection, table_name):
     df.to_sql(table_name, sql_connection, if_exists='replace', index=False)
+
+def run_query(query_statement, sql_connection):
+    print(query_statement)
+    query_output = pd.read_sql(query_statement, sql_connection)
+    print(query_output)
+
