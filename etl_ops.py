@@ -47,3 +47,11 @@ def run_query(query_statement, sql_connection):
     query_output = pd.read_sql(query_statement, sql_connection)
     print(query_output)
 
+def log_progress(message):
+    # log message and timestamp in the log file
+    timestamp_format = '%Y-%h-%d-%H:%M:%S'
+    now = datetime.now()
+    timestamp = now.strftime(timestamp_format) 
+    with open("./etl_project_log.txt","a") as f: 
+        f.write(timestamp + ',' + message + '\n')
+
