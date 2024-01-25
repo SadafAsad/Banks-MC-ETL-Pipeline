@@ -55,3 +55,9 @@ def log_progress(message):
     with open("./etl_project_log.txt","a") as f: 
         f.write(timestamp + ',' + message + '\n')
 
+url = 'https://web.archive.org/web/20230902185326/https://en.wikipedia.org/wiki/List_of_countries_by_GDP_%28nominal%29'
+table_attribs = ['Name', 'MC_USD_Billion']
+db_name = 'Banks_MC.db'
+table_name = 'banks'
+output_csv_path = './Countries_by_GDP.csv'
+
