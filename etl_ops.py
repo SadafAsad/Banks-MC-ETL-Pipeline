@@ -35,3 +35,9 @@ def transform(df, rates_csv_path):
     df['MC_GBP_Billion'] = [np.round(x*rates['GBP'],2) for x in df['MC_USD_Billion']]
     df['MC_EUR_Billion'] = [np.round(x*rates['EUR'],2) for x in df['MC_USD_Billion']]
     df['MC_INR_Billion'] = [np.round(x*rates['INR'],2) for x in df['MC_USD_Billion']]
+
+def load_to_csv(df, output_csv_path):
+    df.to_csv(output_csv_path)
+
+def load_to_db(df, sql_connection, table_name):
+    df.to_sql(table_name, sql_connection, if_exists='replace', index=False)
