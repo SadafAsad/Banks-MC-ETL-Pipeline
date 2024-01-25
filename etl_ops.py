@@ -15,16 +15,15 @@ def extract(url, table_attribs):
     data = BeautifulSoup(html_page, 'html.parser')
     df = pd.DataFrame(columns=table_attribs)
     tables = data.find_all('tbody')
-    rows = tables[2].find_all('tr')
+    rows = tables[0].find_all('tr')
     rows.pop(0)
     for row in rows:
         col = row.find_all('td')
         if len(col)!=0 :
-            if col[0].find('a') is not None and '—' not in col[2]:
-                data_dict = {"Name": col[1].find_all('a')[-1].text,
-                            "MC_USD_Billion": float(col[2].contents[0].strip())}
-                df1 = pd.DataFrame(data_dict, index=[0])
-                df = pd.concat([df,df1], ignore_index=True)
+            data_dict = {"Name": col[1].find_all('a')[-1].text,
+                        "MC_USD_Billion": float(col[2].contents[0].strip())}
+            df1 = pd.DataFrame(data_dict, index=[0])
+            df = pd.concat([df,df1], ignore_index=True)
     return df
 
 def transform(df, rates_csv_path):
@@ -35,6 +34,8 @@ def transform(df, rates_csv_path):
     df['MC_GBP_Billion'] = [np.round(x*rates['GBP'],2) for x in df['MC_USD_Billion']]
     df['MC_EUR_Billion'] = [np.round(x*rates['EUR'],2) for x in df['MC_USD_Billion']]
     df['MC_CAD_Billion'] = [np.round(x*rates['CAD'],2) for x in df['MC_USD_Billion']]
+
+    return df
 
 def load_to_csv(df, output_csv_path):
     df.to_csv(output_csv_path)
@@ -61,39 +62,39 @@ db_name = 'Banks_MC.db'
 table_name = 'banks'
 output_csv_path = './Countries_by_GDP.csv'
 
-# # ----------------- ETL PROCESS ----------------
-# log_progress("Preliminaries complete. Initiating ETL process")
+# ----------------- ETL PROCESS ----------------
+log_progress("Preliminaries complete. Initiating ETL Process")
 
-# extracted_data = extract(url, table_atrribs)
+extracted_data = extract(url, table_attribs)
 
-# log_progress("Data extraction complete. Initiating Transformation process")
+log_progress("Data extraction complete. Initiating Transformation process")
 
-# transformed_data = transform(extracted_data, "./exchange_rates.csv")
+transformed_data = transform(extracted_data, "./exchange_rates.csv")
 
-# log_progress("Data transformation complete. Initiating Loading process")
+log_progress("Data transformation complete. Initiating Loading process")
 
-# load_to_csv(transformed_data, output_csv_path)
+load_to_csv(transformed_data, output_csv_path)
 
-# log_progress("Data saved to CSV file")
+log_progress("Data saved to CSV file")
 
-# sql_connection = sqlite3.connect(db_name)
+sql_connection = sqlite3.connect(db_name)
 
-# log_progress("SQL Connection initiated")
+log_progress("SQL Connection initiated")
 
-# load_to_db(transformed_data, sql_connection, table_name)
+load_to_db(transformed_data, sql_connection, table_name)
 
-# log_progress("Data loaded to Database as a table, Executing queries")
+log_progress("Data loaded to Database as a table, Executing queries")
 
-# query_statement = f"SELECT * FROM {table_name}"
-# run_query(query_statement, sql_connection)
+query_statement = f"SELECT * FROM {table_name}"
+run_query(query_statement, sql_connection)
 
-# query_statement = f"SELECT AVG(MC_GBP_Billion) FROM {table_name}"
-# run_query(query_statement, sql_connection)
+query_statement = f"SELECT AVG(MC_GBP_Billion) FROM {table_name}"
+run_query(query_statement, sql_connection)
 
-# query_statement = f"SELECT Name from {table_name} LIMIT 5"
-# run_query(query_statement, sql_connection)
+query_statement = f"SELECT Name from {table_name} LIMIT 5"
+run_query(query_statement, sql_connection)
 
-# sql_connection.close()
+sql_connection.close()
 
-# log_progress("Server Connection closed")
+log_progress("Server Connection closed")
 
