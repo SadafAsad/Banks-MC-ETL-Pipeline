@@ -27,3 +27,11 @@ def extract(url, table_attribs):
                 df = pd.concat([df,df1], ignore_index=True)
     return df
 
+def transform(df, rates_csv_path):
+    # transform MC (market cap) to respective currencies and add to dataframe
+    rates_df = pd.read_csv(rates_csv_path)
+    rates = rates_df.set_index('Currency').to_dict()['Rate']
+
+    df['MC_GBP_Billion'] = [np.round(x*rates['GBP'],2) for x in df['MC_USD_Billion']]
+    df['MC_EUR_Billion'] = [np.round(x*rates['EUR'],2) for x in df['MC_USD_Billion']]
+    df['MC_INR_Billion'] = [np.round(x*rates['INR'],2) for x in df['MC_USD_Billion']]
