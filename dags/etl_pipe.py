@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-import etl_ops
+from mypackage.etl_ops import extract, transform, load_to_csv, load_to_db
 import pandas as pd
 import sqlite3
 
@@ -12,7 +12,7 @@ import sqlite3
 def extract_task(**kwargs):
     url = 'https://web.archive.org/web/20230908091635/https://en.wikipedia.org/wiki/List_of_largest_banks'
     table_attribs = ['Name', 'MC_USD_Billion']
-    extracted_data = etl_ops.extract(url, table_attribs)
+    extracted_data = extract(url, table_attribs)
     # to push the extracted data to XCom, 
     # which is a cross-communication mechanism in Airflow for sharing data between tasks.
     kwargs['ti'].xcom_push(key='extracted_data', value=extracted_data)
@@ -21,14 +21,14 @@ def transform_task(**kwargs):
     rates_csv_path = "./exchange_rates.csv"
     ti = kwargs['ti']
     extracted_data = ti.xcom_pull(task_ids='extract_task', key='extracted_data')
-    transformed_data = etl_ops.transform(extracted_data, rates_csv_path)
+    transformed_data = transform(extracted_data, rates_csv_path)
     ti.xcom_push(key='transformed_data', value=transformed_data)
 
 def load_to_csv_task(**kwargs):
     output_csv_path = './Countries_by_GDP.csv'
     ti = kwargs['ti']
     transformed_data = ti.xcom_pull(task_ids='transform_task', key='transformed_data')
-    etl_ops.load_to_csv(transformed_data, output_csv_path)
+    load_to_csv(transformed_data, output_csv_path)
 
 def load_to_db_task(**kwargs):
     db_name = 'Banks_MC.db'
@@ -36,7 +36,7 @@ def load_to_db_task(**kwargs):
     sql_connection = sqlite3.connect(db_name)
     ti = kwargs['ti']
     transformed_data = ti.xcom_pull(task_ids='transform_task', key='transformed_data')
-    etl_ops.load_to_db(transformed_data, sql_connection, table_name)
+    load_to_db(transformed_data, sql_connection, table_name)
     sql_connection.close()
 
 def run_query_task(query_statement, sql_connection):

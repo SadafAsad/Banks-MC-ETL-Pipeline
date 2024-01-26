@@ -60,7 +60,7 @@ url = 'https://web.archive.org/web/20230908091635/https://en.wikipedia.org/wiki/
 table_attribs = ['Name', 'MC_USD_Billion']
 db_name = 'Banks_MC.db'
 table_name = 'banks'
-output_csv_path = './Countries_by_GDP.csv'
+output_csv_path = './Largest_Banks.csv'
 
 # ----------------- ETL PROCESS ----------------
 log_progress("Preliminaries complete. Initiating ETL Process")
