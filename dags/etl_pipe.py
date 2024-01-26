@@ -18,14 +18,15 @@ def extract_task(**kwargs):
     kwargs['ti'].xcom_push(key='extracted_data', value=extracted_data)
 
 def transform_task(**kwargs):
-    rates_csv_path = "./exchange_rates.csv"
+    # rates_csv_path = "../exchange_rates.csv"
+    rates_csv_path = '/opt/airflow/exchange_rates.csv'
     ti = kwargs['ti']
     extracted_data = ti.xcom_pull(task_ids='extract_task', key='extracted_data')
     transformed_data = transform(extracted_data, rates_csv_path)
     ti.xcom_push(key='transformed_data', value=transformed_data)
 
 def load_to_csv_task(**kwargs):
-    output_csv_path = './Countries_by_GDP.csv'
+    output_csv_path = '/opt/airflow/Largest_Banks.csv'
     ti = kwargs['ti']
     transformed_data = ti.xcom_pull(task_ids='transform_task', key='transformed_data')
     load_to_csv(transformed_data, output_csv_path)
@@ -116,4 +117,9 @@ run_query_task_3 = PythonOperator(
 )
 
 # Pipeline
-extract_task >> transform_task >> [load_to_csv_task, load_to_db_task] >> [run_query_task_1, run_query_task_2, run_query_task_3]
+extract_task >> transform_task 
+transform_task >> load_to_csv_task
+transform_task >> load_to_db_task 
+load_to_db_task >> run_query_task_1
+load_to_db_task >> run_query_task_2
+load_to_db_task >> run_query_task_3

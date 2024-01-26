@@ -56,45 +56,45 @@ def log_progress(message):
     with open("./etl_project_log.txt","a") as f: 
         f.write(timestamp + ',' + message + '\n')
 
-url = 'https://web.archive.org/web/20230908091635/https://en.wikipedia.org/wiki/List_of_largest_banks'
-table_attribs = ['Name', 'MC_USD_Billion']
-db_name = 'Banks_MC.db'
-table_name = 'banks'
-output_csv_path = './Largest_Banks.csv'
+# url = 'https://web.archive.org/web/20230908091635/https://en.wikipedia.org/wiki/List_of_largest_banks'
+# table_attribs = ['Name', 'MC_USD_Billion']
+# db_name = 'Banks_MC.db'
+# table_name = 'banks'
+# output_csv_path = './Largest_Banks.csv'
 
-# ----------------- ETL PROCESS ----------------
-log_progress("Preliminaries complete. Initiating ETL Process")
+# # ----------------- ETL PROCESS ----------------
+# log_progress("Preliminaries complete. Initiating ETL Process")
 
-extracted_data = extract(url, table_attribs)
+# extracted_data = extract(url, table_attribs)
 
-log_progress("Data extraction complete. Initiating Transformation process")
+# log_progress("Data extraction complete. Initiating Transformation process")
 
-transformed_data = transform(extracted_data, "./exchange_rates.csv")
+# transformed_data = transform(extracted_data, "./exchange_rates.csv")
 
-log_progress("Data transformation complete. Initiating Loading process")
+# log_progress("Data transformation complete. Initiating Loading process")
 
-load_to_csv(transformed_data, output_csv_path)
+# load_to_csv(transformed_data, output_csv_path)
 
-log_progress("Data saved to CSV file")
+# log_progress("Data saved to CSV file")
 
-sql_connection = sqlite3.connect(db_name)
+# sql_connection = sqlite3.connect(db_name)
 
-log_progress("SQL Connection initiated")
+# log_progress("SQL Connection initiated")
 
-load_to_db(transformed_data, sql_connection, table_name)
+# load_to_db(transformed_data, sql_connection, table_name)
 
-log_progress("Data loaded to Database as a table, Executing queries")
+# log_progress("Data loaded to Database as a table, Executing queries")
 
-query_statement = f"SELECT * FROM {table_name}"
-run_query(query_statement, sql_connection)
+# query_statement = f"SELECT * FROM {table_name}"
+# run_query(query_statement, sql_connection)
 
-query_statement = f"SELECT AVG(MC_GBP_Billion) FROM {table_name}"
-run_query(query_statement, sql_connection)
+# query_statement = f"SELECT AVG(MC_GBP_Billion) FROM {table_name}"
+# run_query(query_statement, sql_connection)
 
-query_statement = f"SELECT Name from {table_name} LIMIT 5"
-run_query(query_statement, sql_connection)
+# query_statement = f"SELECT Name from {table_name} LIMIT 5"
+# run_query(query_statement, sql_connection)
 
-sql_connection.close()
+# sql_connection.close()
 
-log_progress("Server Connection closed")
+# log_progress("Server Connection closed")
 
